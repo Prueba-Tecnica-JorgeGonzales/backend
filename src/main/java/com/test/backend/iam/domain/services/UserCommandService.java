@@ -11,8 +11,6 @@ import java.util.Optional;
 public interface UserCommandService {
     Long handle(SignUpCommand command);
     Optional<ImmutablePair<User, String>> handle(SignInCommand command);
-
-    // Agregados para el CRUD completo
     Optional<User> handleUpdate(UpdateUserCommand command);
     void handleDelete(Long id);
 }

@@ -5,10 +5,10 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "usuarios") // Coincide con tu tabla SQL
+@Table(name = "usuarios")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
-@Builder // Patrón Builder para crear objetos fácil
+@Builder
 public class User {
 
     @Id
@@ -22,7 +22,7 @@ public class User {
     private String email;
 
     @Column(nullable = false)
-    private String password; // Aquí guardaremos el Hash, no el texto plano
+    private String password;
 
     @Builder.Default
     private String estado = "ACTIVO";
@@ -30,7 +30,7 @@ public class User {
     @Column(name = "createdAt")
     private LocalDateTime createdAt;
 
-    @PrePersist // Se ejecuta automáticamente antes de guardar
+    @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }

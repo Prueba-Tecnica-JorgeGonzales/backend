@@ -27,9 +27,8 @@ public class AuthController {
         this.userCommandService = userCommandService;
     }
 
-    @PostMapping("/sign-up") // O "/register" según prefieras
+    @PostMapping("/sign-up")
     public ResponseEntity<?> signUp(@RequestBody SignUpResource resource) {
-        // Usamos tu Assembler
         SignUpCommand command = SignUpCommandFromResourceAssembler.toCommandFromResource(resource);
         Long userId = userCommandService.handle(command);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -46,11 +45,7 @@ public class AuthController {
 
         var userEntity = result.get().getLeft();
         var token = result.get().getRight();
-
-        // Creamos una respuesta simple con el token
         var authResource = AuthenticatedUserResourceFromEntityAssembler.toResourceFromEntity(userEntity);
-
-        // Retornamos el recurso del usuario y el token (puedes crear un DTO específico para esto)
         return ResponseEntity.ok().body(new Object() {
             public final AuthenticatedUserResource user = authResource;
             public final String accessToken = token;

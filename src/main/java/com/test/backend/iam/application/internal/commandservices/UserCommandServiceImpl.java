@@ -29,7 +29,6 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     public Long handle(SignUpCommand command) {
-        // 1. Validar si el usuario ya existe usando los Value Objects
         if (userRepository.existsByUsername(command.username())) {
             throw new RuntimeException("El nombre de usuario ya existe");
         }
@@ -38,12 +37,7 @@ public class UserCommandServiceImpl implements UserCommandService {
             throw new RuntimeException("El correo electrónico ya existe");
         }
 
-        // 2. Hashear la contraseña
         String hashedPassword = hashingService.encode(command.password());
-
-        // 3. Crear y guardar la entidad
-        // Nota: Asumo que tu entidad User usa Setters o un Builder.
-        // Aquí uso el Builder que tienes en tu código.
         User user = User.builder()
                 .username(command.username())
                 .email(command.email())
@@ -57,29 +51,21 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Override
     public Optional<ImmutablePair<User, String>> handle(SignInCommand command) {
-        // 1. Buscar usuario por Username (VO)
         var userOptional = userRepository.findByUsername(command.username());
-
         if (userOptional.isEmpty()) {
             throw new RuntimeException("Usuario no encontrado");
         }
 
         User user = userOptional.get();
 
-        // 2. Verificar contraseña usando tu HashingService
         if (!hashingService.matches(command.password(), user.getPassword())) {
             throw new RuntimeException("Credenciales inválidas");
         }
 
-        // 3. Generar Token (Simulado para la prueba técnica)
-        // En un entorno real, aquí usarías un JwtService.
         String token = UUID.randomUUID().toString();
 
         return Optional.of(new ImmutablePair<>(user, token));
     }
-
-    // --- MÉTODOS ADICIONALES PARA CUMPLIR CON EL CRUD (PUT/DELETE) ---
-    // Deberás agregarlos a tu interfaz UserCommandService también
 
     public Optional<User> handleUpdate(UpdateUserCommand command) {
         var userOptional = userRepository.findById(command.id());
@@ -90,17 +76,14 @@ public class UserCommandServiceImpl implements UserCommandService {
 
         User user = userOptional.get();
 
-        // 1. Actualizamos Username si no es nulo/vacío
         if (command.username() != null && !command.username().isBlank()) {
             user.setUsername(command.username());
         }
 
-        // 2. Actualizamos Email
         if (command.email() != null && !command.email().isBlank()) {
             user.setEmail(command.email());
         }
 
-        // 3. Actualizamos Password (CON HASHING)
         if (command.password() != null && !command.password().isBlank()) {
             String newHashedPassword = hashingService.encode(command.password());
             user.setPassword(newHashedPassword);

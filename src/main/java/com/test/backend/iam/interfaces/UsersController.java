@@ -31,7 +31,6 @@ public class UsersController {
 
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody SignUpResource resource) {
-        // Reutilizamos el assembler y el servicio de comando
         var command = SignUpCommandFromResourceAssembler.toCommandFromResource(resource);
         Long id = userCommandService.handle(command);
         return ResponseEntity.status(HttpStatus.CREATED).body(id);
@@ -58,7 +57,6 @@ public class UsersController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // PUT /api/users/{id}
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id,
                                         @RequestBody UpdateUserResource resource) {
